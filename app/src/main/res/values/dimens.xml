@@ -1,0 +1,20 @@
+<resources>
+    <dimen name="progressbar_size">120dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="item_offset">10dp</dimen>
+    <dimen name="detail_backdrop_height">250dp</dimen>
+    <dimen name="backdrop_title">30sp</dimen>
+    <dimen name="backdrop_subtitle">18sp</dimen>
+    <dimen name="card_margin">5dp</dimen>
+    <dimen name="movie_poster_height">160dp</dimen>
+    <dimen name="movie_title_padding">10dp</dimen>
+    <dimen name="movie_title">15dp</dimen>
+    <dimen name="rating_bottom">20dp</dimen>
+    <dimen name="release_margin">5dp</dimen>
+    <dimen name="titleMarginEnd">64dp</dimen>
+    <dimen name="expandedTitleMarginStart">48dp</dimen>
+    <dimen name="label_textSize">15sp</dimen>
+    <dimen name="label_padding">8dp</dimen>
+    <dimen name="poster_size_width">150dp</dimen>
+    <dimen name="poster_size_height">250dp</dimen>
+</resources>

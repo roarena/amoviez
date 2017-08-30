@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">AmovieZ</string>
+    <string name="splash_subtitle">Movies from A to Z</string>
+    <string name="splash_credits">by Rodrigo Câmara</string>
+
+    <string name="error_request">Ops! Something went wrong with the request.\nPlease check your connection and try again later.</string>
+
+    <string name="main_popular_title">POPULAR MOVIES</string>
+    <string name="main_popular_subtitle">20 most popular movies</string>
+
+    <string name="main_rated_title">TOP RATED MOVIES</string>
+    <string name="main_rated_subtitle">20 top rated movies</string>
+
+    <string name="fab_settings">Settings</string>
+    <string name="fab_rated">Filter by Top Rated</string>
+    <string name="fab_popular">Filter by Most Popular</string>
+</resources>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/layoutBackground"
+    tools:context="eu.rodrigocamara.amoviez.screens.SplashActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:padding="@dimen/fab_margin"
+        android:text="@string/app_name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+        android:textColor="@color/txtMovieTextColor" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:padding="@dimen/item_offset"
+        android:text="@string/splash_subtitle"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="@color/txtMovieTextColor" />
+
+    <TextView
+        android:id="@+id/tv_credits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/item_offset"
+        android:text="@string/splash_credits"
+        android:textColor="@color/txtMovieTextColor" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="@dimen/progressbar_size"
+        android:layout_height="@dimen/progressbar_size"
+        android:layout_below="@+id/textView2"
+        android:layout_toEndOf="@+id/tv_quotes" />
+
+    <TextView
+        android:id="@+id/tv_quotes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/progressBar"
+        android:layout_alignEnd="@+id/textView2"
+        android:layout_below="@+id/textView2"
+        android:layout_marginLeft="@dimen/item_offset"
+        android:layout_marginRight="@dimen/item_offset"
+        android:gravity="center"
+        android:text="Quotes while loading...\nasdasd"
+        android:textColor="@color/txtMovieTextColor" />
+
+    <ImageView
+        android:id="@+id/iv_error"
+        android:layout_width="@dimen/progressbar_size"
+        android:layout_height="@dimen/progressbar_size"
+        android:layout_alignTop="@+id/progressBar"
+        android:layout_toEndOf="@+id/tv_quotes"
+        android:src="@drawable/toby"
+        android:visibility="invisible" />
+</RelativeLayout>

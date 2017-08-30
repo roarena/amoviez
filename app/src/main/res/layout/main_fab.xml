@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:paddingBottom="@dimen/item_offset"
+        android:paddingLeft="@dimen/item_offset"
+        android:paddingRight="@dimen/item_offset"
+        fab:menu_animationDelayPerItem="55"
+        fab:menu_colorNormal="@color/fabBackground"
+        fab:menu_colorPressed="@color/fabBackground"
+        fab:menu_colorRipple="@color/colorRipple"
+        fab:menu_fab_size="normal"
+        fab:menu_icon="@drawable/ic_dots_vertical_grey600_24dp"
+        fab:menu_labels_colorNormal="@color/labels_colorNormal"
+        fab:menu_labels_colorPressed="@color/labels_colorPressed"
+        fab:menu_labels_colorRipple="@color/labels_colorRipple"
+        fab:menu_labels_cornerRadius="@dimen/item_offset"
+        fab:menu_labels_ellipsize="none"
+        fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+        fab:menu_labels_maxLines="-1"
+        fab:menu_labels_padding="@dimen/label_padding"
+        fab:menu_labels_position="left"
+        fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+        fab:menu_labels_showShadow="true"
+        fab:menu_labels_textColor="@color/labels_textColor"
+        fab:menu_labels_textSize="@dimen/label_textSize"
+        fab:menu_openDirection="up">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_manage"
+            app:fab_colorNormal="@color/fabBackground"
+            fab:fab_colorPressed="@color/fabBackground"
+            fab:fab_colorRipple="@color/colorRipple"
+            fab:fab_label="@string/fab_settings"
+            fab:fab_size="mini"
+            />
+
+        <!-- Since this is a toogle, we need to show the action to be done not the one that is shown in the label -->
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_toogle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_filter_variant"
+            app:fab_colorNormal="@color/fabBackground"
+            fab:fab_colorPressed="@color/fabBackground"
+            fab:fab_colorRipple="@color/colorRipple"
+            fab:fab_label="@string/fab_rated"
+            fab:fab_size="mini"
+             />
+
+
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+</LinearLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="txtMovieTextColor">#BCB7DB</color>
+    <color name="fabBackground">#84C652</color>
+    <color name="layoutBackground">#6B6BA5</color>
+    <color name="colorRipple">#99d4d4d4</color>
+    <color name="labels_colorNormal">#333</color>
+    <color name="labels_colorPressed">#444</color>
+    <color name="labels_colorRipple">#66efecec</color>
+    <color name="labels_textColor">#f2f1f1</color>
+    <color name="card_textColor">#4c4c4c</color>
+</resources>
