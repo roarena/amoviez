@@ -29,6 +29,7 @@ public class Constants {
     public static final String REQUEST_POPULAR_SORT = "popular";
     public static final String REQUEST_TOP_RATED_SORT = "top_rated";
     public static final String REQUEST_VIDEOS_SORT = "videos";
+    public static final String REQUEST_REVIEWS_SORT = "reviews";
 
     // INTS
     public static final int TIME_REFRESH_QUOTE = 6000;

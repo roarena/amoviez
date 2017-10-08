@@ -1,18 +1,15 @@
 package eu.rodrigocamara.amoviez.screens;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -26,14 +23,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import adapter.ReviewAdapter;
 import adapter.VideoAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import eu.rodrigocamara.amoviez.R;
 import network.NetworkUtils;
 import pojo.Movie;
-import pojo.Result;
-import pojo.Result$$Parcelable;
+import pojo.ResultReviews;
 import pojo.ResultVideos;
 import utils.Constants;
 
@@ -63,9 +60,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
     RatingBar ratingBar;
 
     @BindView(R.id.recycler_view_video)
-    RecyclerView recyclerView;
+    RecyclerView recyclerViewVideo;
 
     private VideoAdapter videoAdapter;
+
+    @BindView(R.id.recycler_view_review)
+    RecyclerView recyclerViewReview;
+
+    private ReviewAdapter reviewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +84,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             tvMovieRelease.setText(mMovie.getRelease_date());
             ratingBar.setRating(mMovie.getVote_average() / 2);
             Picasso.with(this).load(mMovie.getPoster_path().toString()).into(ivMoviePoster);
-            new BackGroundWorker().execute(NetworkUtils.buildUrl(Constants.REQUEST_VIDEOS_SORT,mMovie.getId()));
+            new BackGroundWorker().execute(NetworkUtils.buildUrl(Constants.REQUEST_VIDEOS_SORT, mMovie.getId()), NetworkUtils.buildUrl(Constants.REQUEST_REVIEWS_SORT, mMovie.getId()));
         }
     }
 
@@ -116,10 +118,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
         @Override
         protected ArrayList<String> doInBackground(URL... urls) {
             ArrayList<String> httpResult = new ArrayList<>();
-            try {
-                httpResult.add(NetworkUtils.getResponseFromHttpUrl(urls[0]));
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (int i = 0; i < 2; i++) {
+                try {
+                    httpResult.add(NetworkUtils.getResponseFromHttpUrl(urls[i]));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             return httpResult;
         }
@@ -127,17 +131,27 @@ public class MovieDetailsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<String> result) {
             if (result.size() > 0) {
-                for (int i = 0; i < result.size(); i++) {
-                    Gson gson = new Gson();
+                Gson gson = new Gson();
+                RecyclerView.LayoutManager mLayoutManagerVideo = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+                RecyclerView.LayoutManager mLayoutManagerReview = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
 
-                    ResultVideos results = ResultVideos.create(gson.fromJson(result.get(i), ResultVideos.class).getResults());
-                    Log.i("RODRIGO",results.getResults().get(0).getKey());
+                // Get videos
+                ResultVideos resultVideos = ResultVideos.create(gson.fromJson(result.get(0), ResultVideos.class).getResults());
 
-                    videoAdapter = new VideoAdapter(results.getResults(),getApplicationContext());
-                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-                    recyclerView.setLayoutManager(mLayoutManager);
-                    recyclerView.setItemAnimator(new DefaultItemAnimator());
-                    recyclerView.setAdapter(videoAdapter);
+                if (resultVideos.getResults().size() > 0) {
+                    videoAdapter = new VideoAdapter(resultVideos.getResults(), getApplicationContext());
+                    recyclerViewVideo.setLayoutManager(mLayoutManagerVideo);
+                    recyclerViewVideo.setItemAnimator(new DefaultItemAnimator());
+                    recyclerViewVideo.setAdapter(videoAdapter);
+                }
+
+                // Get Reviews
+                ResultReviews resultReviews = ResultReviews.create(gson.fromJson(result.get(1), ResultReviews.class).getResults());
+                if (resultReviews.getResults().size() > 0) {
+                    reviewAdapter = new ReviewAdapter(resultReviews.getResults(), getApplicationContext());
+                    recyclerViewReview.setLayoutManager(mLayoutManagerReview);
+                    recyclerViewReview.setItemAnimator(new DefaultItemAnimator());
+                    recyclerViewReview.setAdapter(reviewAdapter);
                 }
             }
         }
