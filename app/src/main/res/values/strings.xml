@@ -14,4 +14,6 @@
     <string name="fab_settings">Settings</string>
     <string name="fab_rated">Filter by Top Rated</string>
     <string name="fab_popular">Filter by Most Popular</string>
+
+    <string name="review_title">Reviews</string>
 </resources>

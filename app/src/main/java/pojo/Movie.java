@@ -14,6 +14,8 @@ import utils.Constants;
  */
 @Parcel
 public class Movie {
+
+    private String id;
     private String original_title;
     private String poster_path;
     private String overview;
@@ -21,6 +23,9 @@ public class Movie {
     private String release_date;
     private String backdrop_path;
 
+    public String getId() {
+        return id;
+    }
 
     public String getOriginal_title() {
         return original_title;
@@ -42,7 +47,7 @@ public class Movie {
         return url;
     }
 
-    public URL getBackdrop_path(){
+    public URL getBackdrop_path() {
         Uri builtUri = Uri.parse(Constants.IMAGE_BASE_URL).buildUpon().
                 appendPath(Constants.QUERY_IMAGE_SIZE).
                 appendPath(backdrop_path.substring(1))
@@ -67,6 +72,6 @@ public class Movie {
 
     public String getRelease_date() {
         //This will return the year ONLY.
-        return release_date.substring(0,release_date.indexOf("-"));
+        return release_date.substring(0, release_date.indexOf("-"));
     }
 }

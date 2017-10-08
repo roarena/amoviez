@@ -15,7 +15,7 @@ public class Result {
     String total_pages;
     String total_results;
     List<Movie> results;
-    
+
     @ParcelFactory
     public static Result create(List<Movie> results) {
         return new Result(results);

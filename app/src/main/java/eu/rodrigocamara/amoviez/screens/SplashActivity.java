@@ -16,12 +16,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import eu.rodrigocamara.amoviez.R;
 import network.NetworkUtils;
+import pojo.Movie;
 import pojo.Result;
 import pojo.Result$$Parcelable;
 import utils.Constants;

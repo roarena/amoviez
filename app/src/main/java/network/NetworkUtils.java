@@ -36,9 +36,28 @@ public class NetworkUtils {
         return url;
     }
 
+    public static URL buildUrl(String sortParameter, String movieId) {
+        Uri builtUri = Uri.parse(Constants.MOVIEDB_BASE_URL).buildUpon().
+                appendPath(Constants.API_VERSION).
+                appendPath(Constants.QUERY_TYPE).
+                appendPath(movieId).
+                appendPath(sortParameter).
+                appendQueryParameter(Constants.PARAM_API, BuildConfig.API_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        urlConnection.setConnectTimeout(Constants.CONNECTION_TIMEOU);
+        urlConnection.setConnectTimeout(Constants.CONNECTION_TIMEOUT);
         try {
             if (isConnectionOK(urlConnection.getResponseCode())) {
                 InputStream in = urlConnection.getInputStream();
