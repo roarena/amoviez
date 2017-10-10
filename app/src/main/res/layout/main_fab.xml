@@ -45,8 +45,7 @@
             fab:fab_colorPressed="@color/fabBackground"
             fab:fab_colorRipple="@color/colorRipple"
             fab:fab_label="@string/fab_settings"
-            fab:fab_size="mini"
-            />
+            fab:fab_size="mini" />
 
         <!-- Since this is a toogle, we need to show the action to be done not the one that is shown in the label -->
 
@@ -59,9 +58,18 @@
             fab:fab_colorPressed="@color/fabBackground"
             fab:fab_colorRipple="@color/colorRipple"
             fab:fab_label="@string/fab_rated"
-            fab:fab_size="mini"
-             />
+            fab:fab_size="mini" />
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_favorites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_filter_variant"
+            app:fab_colorNormal="@color/fabBackground"
+            fab:fab_colorPressed="@color/fabBackground"
+            fab:fab_colorRipple="@color/colorRipple"
+            fab:fab_label="@string/fab_favorite"
+            fab:fab_size="mini" />
 
 
     </com.github.clans.fab.FloatingActionMenu>

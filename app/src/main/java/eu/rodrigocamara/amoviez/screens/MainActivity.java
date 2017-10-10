@@ -1,5 +1,8 @@
 package eu.rodrigocamara.amoviez.screens;
 
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -19,12 +22,15 @@ import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import adapter.MovieAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import data.FavoritesContract;
+import data.FavoritesDbHelper;
 import eu.rodrigocamara.amoviez.R;
 import pojo.Movie;
 import pojo.Result;
@@ -52,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.fab_toogle)
     FloatingActionButton mFabOption;
 
+    @BindView(R.id.fab_favorites)
+    FloatingActionButton mFabFavorites;
+
     @BindView(R.id.fab_settings)
     FloatingActionButton mFabSettings;
 
@@ -70,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
     private Result queryPopularResult;
     private Result queryTopRatedResult;
 
+    private boolean isShowingFavorites;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,8 +92,11 @@ public class MainActivity extends AppCompatActivity {
         queryTopRatedResult = Parcels.unwrap(getIntent().getParcelableExtra(Constants.PARCEL_TOP_RATED));
         if (queryPopularResult != null && queryTopRatedResult != null) {
             //We always open the app in the Most Popular Filter (Maybe change this later to shared pref?)
-            loadMovies(queryPopularResult);
-
+            if (isShowingFavorites) {
+                loadFavorites();
+            } else {
+                loadMovies(queryPopularResult);
+            }
             setSupportActionBar(mToolbar);
             initCollapsingToolbar();
 
@@ -91,6 +105,19 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, R.string.error_request, Toast.LENGTH_LONG).show();
         }
+
+    }
+
+    private Cursor getFavoriteMovies() {
+        return data.DatabaseUtils.getDB(this).query(
+                FavoritesContract.FavoriteMovies.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                FavoritesContract.FavoriteMovies.COLUMN_ORIGINAL_TITLE
+        );
     }
 
     private void loadMovies(Result result) {
@@ -99,6 +126,27 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mMovieAdapter);
+    }
+
+    private void loadFavorites() {
+        List<Movie> movies = new ArrayList<Movie>();
+
+        Cursor cursor = getFavoriteMovies();
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+
+            Movie movie = new Movie();
+            movie.setId(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoriteMovies.COLUMN_MOVIE_ID)));
+            movie.setOriginal_title(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoriteMovies.COLUMN_ORIGINAL_TITLE)));
+            movie.setPoster_path(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoriteMovies.COLUMN_POSTER_PATH)));
+            movie.setOverview(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoriteMovies.COLUMN_OVERVIEW)));
+            movie.setRelease_date(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoriteMovies.COLUMN_RELEASE_DATE)));
+            movie.setVote_average(cursor.getFloat(cursor.getColumnIndex(FavoritesContract.FavoriteMovies.COLUMN_VOTE_AVERAGE)));
+            movie.setBackdrop_path(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoriteMovies.COLUMN_BACKDROP_PATH)));
+
+            movies.add(movie);
+        }
+        mMovieAdapter = new MovieAdapter(getApplicationContext(), movies);
         recyclerView.setAdapter(mMovieAdapter);
     }
 
@@ -167,21 +215,41 @@ public class MainActivity extends AppCompatActivity {
         mBackdropPath = savedInstanceState.getString("mBackdropPath");
     }
 
+    @Override
+    protected void onResume() {
+        //Reload Favorites, in case any got deleted. I did this because I'm using List not Cursor in the adapter.
+        if (isShowingFavorites) {
+            loadFavorites();
+        }
+        super.onResume();
+    }
+
+    private void closeFAB() {
+        if (mFabMenu.isOpened()) {
+            mFabMenu.close(true);
+        }
+    }
+
     public void initFAB() {
         mFabSettings.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (mFabMenu.isOpened()) {
-                    mFabMenu.close(true);
-                }
+                closeFAB();
             }
         });
 
         mFabOption.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (mFabMenu.isOpened()) {
-                    mFabMenu.close(true);
-                }
+                closeFAB();
                 toggleResultsFilter();
+                isShowingFavorites = false;
+            }
+        });
+
+        mFabFavorites.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                closeFAB();
+                isShowingFavorites = true;
+                loadFavorites();
             }
         });
     }

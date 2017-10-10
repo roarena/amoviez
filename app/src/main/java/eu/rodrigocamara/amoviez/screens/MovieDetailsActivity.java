@@ -1,5 +1,7 @@
 package eu.rodrigocamara.amoviez.screens;
 
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -10,9 +12,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
@@ -27,6 +31,8 @@ import adapter.ReviewAdapter;
 import adapter.VideoAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import data.DatabaseUtils;
+import data.FavoritesContract;
 import eu.rodrigocamara.amoviez.R;
 import network.NetworkUtils;
 import pojo.Movie;
@@ -59,6 +65,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @BindView(R.id.ratingBar)
     RatingBar ratingBar;
 
+    @BindView(R.id.tb_favorite)
+    ToggleButton tbFavorite;
+
     @BindView(R.id.recycler_view_video)
     RecyclerView recyclerViewVideo;
 
@@ -84,8 +93,50 @@ public class MovieDetailsActivity extends AppCompatActivity {
             tvMovieRelease.setText(mMovie.getRelease_date());
             ratingBar.setRating(mMovie.getVote_average() / 2);
             Picasso.with(this).load(mMovie.getPoster_path().toString()).into(ivMoviePoster);
+            if (checkFavorite()) {
+                tbFavorite.setChecked(true);
+            }
+            tbFavorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (checkFavorite()) {
+                        removeFromFavorite();
+                    }else{
+                        addToFavorite();
+                    }
+                }
+            });
             new BackGroundWorker().execute(NetworkUtils.buildUrl(Constants.REQUEST_VIDEOS_SORT, mMovie.getId()), NetworkUtils.buildUrl(Constants.REQUEST_REVIEWS_SORT, mMovie.getId()));
         }
+    }
+
+    private void addToFavorite() {
+        ContentValues cv = new ContentValues();
+
+        cv.put(FavoritesContract.FavoriteMovies.COLUMN_MOVIE_ID, mMovie.getId());
+        cv.put(FavoritesContract.FavoriteMovies.COLUMN_ORIGINAL_TITLE, mMovie.getOriginal_title());
+        cv.put(FavoritesContract.FavoriteMovies.COLUMN_POSTER_PATH, mMovie.getOriginalPosterPath());
+        cv.put(FavoritesContract.FavoriteMovies.COLUMN_OVERVIEW, mMovie.getOverview());
+        cv.put(FavoritesContract.FavoriteMovies.COLUMN_VOTE_AVERAGE, mMovie.getVote_average());
+        cv.put(FavoritesContract.FavoriteMovies.COLUMN_RELEASE_DATE, mMovie.getOriginalReleaseDate());
+        cv.put(FavoritesContract.FavoriteMovies.COLUMN_BACKDROP_PATH, mMovie.getOriginalBackdropPath());
+
+        DatabaseUtils.getDB(getApplicationContext()).insert(FavoritesContract.FavoriteMovies.TABLE_NAME, null, cv);
+    }
+
+    private void removeFromFavorite() {
+        DatabaseUtils.getDB(this).delete(FavoritesContract.FavoriteMovies.TABLE_NAME, FavoritesContract.FavoriteMovies.COLUMN_MOVIE_ID + "=" + mMovie.getId(), null);
+    }
+
+    private boolean checkFavorite() {
+        Cursor cursor = DatabaseUtils.getDB(this).query(FavoritesContract.FavoriteMovies.TABLE_NAME,
+                new String[]{FavoritesContract.FavoriteMovies.COLUMN_MOVIE_ID},
+                FavoritesContract.FavoriteMovies.COLUMN_MOVIE_ID + "=" + mMovie.getId(),
+                null, null, null, null);
+        if (cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
     }
 
     private void initCollapsingToolbar() {
