@@ -2,6 +2,7 @@ package eu.rodrigocamara.amoviez.screens;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.gson.Gson;
@@ -101,7 +103,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     if (checkFavorite()) {
                         removeFromFavorite();
-                    }else{
+                    } else {
                         addToFavorite();
                     }
                 }
@@ -121,11 +123,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
         cv.put(FavoritesContract.FavoriteMovies.COLUMN_RELEASE_DATE, mMovie.getOriginalReleaseDate());
         cv.put(FavoritesContract.FavoriteMovies.COLUMN_BACKDROP_PATH, mMovie.getOriginalBackdropPath());
 
-        DatabaseUtils.getDB(getApplicationContext()).insert(FavoritesContract.FavoriteMovies.TABLE_NAME, null, cv);
+        getContentResolver().insert(FavoritesContract.FavoriteMovies.CONTENT_URI, cv);
     }
 
     private void removeFromFavorite() {
-        DatabaseUtils.getDB(this).delete(FavoritesContract.FavoriteMovies.TABLE_NAME, FavoritesContract.FavoriteMovies.COLUMN_MOVIE_ID + "=" + mMovie.getId(), null);
+        Uri uri = FavoritesContract.FavoriteMovies.CONTENT_URI;
+        uri = uri.buildUpon().appendPath(mMovie.getId()).build();
+
+        getContentResolver().delete(uri, null, null);
     }
 
     private boolean checkFavorite() {

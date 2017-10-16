@@ -26,6 +26,11 @@
         <activity android:name=".screens.MovieDetailsActivity">
 
         </activity>
+        <provider
+            android:authorities="eu.rodrigocamara.amoviez"
+            android:name="data.MovieProvider"
+            android:exported="false"
+            />
     </application>
 
 </manifest>

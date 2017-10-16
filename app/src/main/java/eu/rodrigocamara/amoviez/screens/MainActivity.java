@@ -6,6 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -36,7 +39,8 @@ import pojo.Movie;
 import pojo.Result;
 import utils.Constants;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<Cursor> {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -80,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private Result queryTopRatedResult;
 
     private boolean isShowingFavorites;
+    private static final int TASK_LOADER_ID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         if (queryPopularResult != null && queryTopRatedResult != null) {
             //We always open the app in the Most Popular Filter (Maybe change this later to shared pref?)
             if (isShowingFavorites) {
-                loadFavorites();
+                getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, this);
             } else {
                 loadMovies(queryPopularResult);
             }
@@ -129,10 +134,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(mMovieAdapter);
     }
 
-    private void loadFavorites() {
+    private void loadFavorites(Cursor cursor) {
         List<Movie> movies = new ArrayList<Movie>();
 
-        Cursor cursor = getFavoriteMovies();
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
 
             Movie movie = new Movie();
@@ -217,10 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        //Reload Favorites, in case any got deleted. I did this because I'm using List not Cursor in the adapter.
-        if (isShowingFavorites) {
-            loadFavorites();
-        }
+        getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, this);
         super.onResume();
     }
 
@@ -249,8 +250,62 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 closeFAB();
                 isShowingFavorites = true;
-                loadFavorites();
+                getSupportLoaderManager().initLoader(TASK_LOADER_ID, null, MainActivity.this);
             }
         });
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, final Bundle loaderArgs) {
+
+        return new AsyncTaskLoader<Cursor>(this) {
+
+            Cursor mTaskData = null;
+
+            @Override
+            protected void onStartLoading() {
+                if (mTaskData != null) {
+                    deliverResult(mTaskData);
+                } else {
+                    forceLoad();
+                }
+            }
+
+            @Override
+            public Cursor loadInBackground() {
+                try {
+                    return getContentResolver().query(FavoritesContract.FavoriteMovies.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            FavoritesContract.FavoriteMovies.COLUMN_ORIGINAL_TITLE);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            public void deliverResult(Cursor data) {
+                mTaskData = data;
+                super.deliverResult(data);
+            }
+        };
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        //Reload Favorites, in case any got deleted or added.
+        if (isShowingFavorites) {
+            loadFavorites(data);
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        loadFavorites(null);
     }
 }
