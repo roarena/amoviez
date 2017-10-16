@@ -306,6 +306,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        loadFavorites(null);
+        return;
     }
 }
